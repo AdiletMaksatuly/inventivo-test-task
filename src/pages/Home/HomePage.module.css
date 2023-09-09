@@ -1,0 +1,9 @@
+.start {
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    color: inherit;
+    font-weight: 500;
+    background-color: #1a1a1a;
+    transition: border-color 0.25s;
+}
