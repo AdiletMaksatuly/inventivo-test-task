@@ -1,5 +1,5 @@
 import {useEffect, useRef} from "react";
-import {DrawingUtils, FilesetResolver, PoseLandmarker} from "@mediapipe/tasks-vision";
+import {DrawingUtils, FilesetResolver, LandmarkData, PoseLandmarker} from "@mediapipe/tasks-vision";
 import styles from "./CameraPage.module.css";
 import {assertExist} from "../../utils/exist.assertion.ts";
 import {hasGetUserMedia} from "../../utils/hasGetUserMedia.util.ts";
@@ -14,14 +14,14 @@ export default function CameraPage() {
     const landmarkerRef = useRef<PoseLandmarker>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    const canvasCtx = canvasRef.current?.getContext("2d");
-    const drawingUtils = new DrawingUtils(canvasCtx);
-
     const init = async  () => {
         if(!hasGetUserMedia()) {
             alert("Ваш браузер не поддерживает доступ к камере");
             return;
         }
+
+        const canvasCtx = canvasRef.current?.getContext("2d");
+        const drawingUtils = new DrawingUtils(canvasCtx);
 
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm");
 
@@ -31,7 +31,8 @@ export default function CameraPage() {
                 baseOptions: {
                     modelAssetPath: "/src/assets/models/pose_landmarker_lite.task"
                 },
-                runningMode: "VIDEO",
+                num_poses: 2,
+                runningMode: "LIVE_STREAM",
             });
 
         navigator.mediaDevices.getUserMedia({
@@ -41,11 +42,11 @@ export default function CameraPage() {
             assertExist(videoRef.current, "videoRef.current");
 
             videoRef.current.srcObject = stream;
-            videoRef.current.addEventListener("loadeddata", predictWebcam)
+            videoRef.current.addEventListener("loadeddata", () => predictWebcam(canvasCtx, drawingUtils))
         });
     }
 
-    const predictWebcam = () => {
+    const predictWebcam = (canvasCtx: CanvasRenderingContext2D, drawingUtils: DrawingUtils) => {
         assertExist(videoRef.current, "videoRef.current");
 
         const startTimeMs = performance.now();
@@ -63,13 +64,22 @@ export default function CameraPage() {
                     drawingUtils.drawLandmarks(landmark, {
                         radius: (data: any) => DrawingUtils.lerp(data.from!.z, -0.15, 0.1, 5, 1)
                     });
-                    drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS);
+
+                    drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS, {
+                        color: (landmarkData: LandmarkData) => {
+                            if (landmarkData.index >= 11 && landmarkData.index <= 22) {
+                                return 'red';
+                            }
+
+                            return 'white';
+                        },
+                    });
                 }
                 canvasCtx.restore();
             });
         }
 
-        window.requestAnimationFrame(predictWebcam);
+        window.requestAnimationFrame(() => predictWebcam(canvasCtx, drawingUtils));
     }
 
 
