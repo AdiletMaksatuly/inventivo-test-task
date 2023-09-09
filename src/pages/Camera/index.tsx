@@ -62,7 +62,17 @@ export default function CameraPage() {
                 canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
                 for (const landmark of result.landmarks) {
                     drawingUtils.drawLandmarks(landmark, {
-                        radius: (data: any) => DrawingUtils.lerp(data.from!.z, -0.15, 0.1, 5, 1)
+                        radius: (data: any) => DrawingUtils.lerp(data.from!.z, -0.15, 0.1, 5, 1),
+                        color: (landmarkData: LandmarkData) => {
+                           if (landmarkData.index === 13 || landmarkData.index === 14) return 'blue';
+                           if (
+                               landmarkData.index === 11 ||
+                               landmarkData.index === 12 ||
+                               landmarkData.index >= 15 && landmarkData.index <= 22
+                           ) return 'yellow';
+
+                           return 'white';
+                        },
                     });
 
                     drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS, {
