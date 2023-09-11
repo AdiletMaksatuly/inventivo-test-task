@@ -7,3 +7,5 @@ declare module "@mediapipe/tasks-vision" {
 
     export { FilesetResolver, DrawingUtils, LandmarkData, NormalizedLandmark, PoseLandmarker } from "@mediapipe/tasks-vision/vision.d.ts";
 }
+
+declare module "*.task";

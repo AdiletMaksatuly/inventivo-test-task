@@ -1,4 +1,5 @@
 import {FilesetResolver, PoseLandmarker} from "@mediapipe/tasks-vision";
+import poseAsset from "/src/assets/models/pose_landmarker_lite.task";
 
 export const createPoseLandmarker = async (): Promise<PoseLandmarker> => {
     const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm");
@@ -7,7 +8,7 @@ export const createPoseLandmarker = async (): Promise<PoseLandmarker> => {
         vision,
         {
             baseOptions: {
-                modelAssetPath: "/public/models/pose_landmarker_lite.task"
+                modelAssetPath: poseAsset,
             },
             runningMode: "VIDEO",
             minPosePresenceConfidence: 0.9,
