@@ -1,6 +1,9 @@
 # inventivo-test-task
 Тестовое задание на Frontend разработчика (React)
 
+Деплой:
+https://inventivo-test-task.vercel.app/
+
 ## Запуск
 1) Склонируйте этот репозиторий: `git clone https://github.com/AdiletMaksatuly/inventivo-test-task.git`
 2) Перейдите в директорию репозитория: `cd inventivo-test-task`
