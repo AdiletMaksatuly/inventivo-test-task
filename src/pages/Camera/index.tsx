@@ -11,7 +11,7 @@ import {Link} from "react-router-dom";
 import {createPoseLandmarker} from "../../pose-landmarker/createPoseLandmarker.ts";
 import {CANVAS_HEIGHT, CANVAS_WIDTH, connectToCamera} from "../../pose-landmarker/connectToCamera.ts";
 import {drawPredictions} from "../../pose-landmarker/drawPredictions.ts";
-import {ElbowAngles} from "../../model/elbow-angles.model.ts";
+import {ElbowAngles} from "../../models/elbow-angles.model.ts";
 import {calculateElbowAngles} from "../../pose-landmarker/calculateElbowAngles.ts";
 import {stopAllStreams} from "../../utils/stopAllStreams.util.ts";
 
