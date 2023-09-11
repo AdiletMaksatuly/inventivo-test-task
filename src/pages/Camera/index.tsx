@@ -23,6 +23,8 @@ export default function CameraPage() {
     const landmarkerRef = useRef<PoseLandmarker | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    const [isPermissionDeniedError, setIsPermissionDeniedError] = useState<boolean>(false);
+
     const [angles, setAngles] = useState<ElbowAngles>({ left: 0, right: 0 });
 
     const init = async (): Promise<MediaStream | undefined> => {
@@ -36,16 +38,23 @@ export default function CameraPage() {
 
         landmarkerRef.current = await createPoseLandmarker();
 
-        const videoStream = await connectToCamera()
+        try {
+            const videoStream = await connectToCamera()
 
-        const canvasCtx = canvasRef.current.getContext("2d");
-        assertExist(canvasCtx, "canvasCtx");
-        const drawingUtils = new DrawingUtils(canvasCtx);
+            const canvasCtx = canvasRef.current.getContext("2d");
+            assertExist(canvasCtx, "canvasCtx");
+            const drawingUtils = new DrawingUtils(canvasCtx);
 
-        videoRef.current.srcObject = videoStream;
-        videoRef.current.addEventListener("loadeddata", () => predictWebcam(canvasCtx, drawingUtils))
+            videoRef.current.srcObject = videoStream;
+            videoRef.current.addEventListener("loadeddata", () => predictWebcam(canvasCtx, drawingUtils))
 
-        return videoStream;
+            return videoStream;
+        } catch (e) {
+            if (e instanceof DOMException && e.name === "NotAllowedError") {
+                setIsPermissionDeniedError(true)
+            }
+            throw e;
+        }
     }
 
     const predictWebcam = (canvasCtx: CanvasRenderingContext2D, drawingUtils: DrawingUtils) => {
@@ -84,6 +93,10 @@ export default function CameraPage() {
             videoStream.then((stream) => stopAllStreams(stream));
         }
     }, []);
+
+    if (isPermissionDeniedError) {
+        return <h1>Ошибка доступа к камере</h1>
+    }
 
     return <section>
         <h1>Camera page</h1>

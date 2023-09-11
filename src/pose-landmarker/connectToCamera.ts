@@ -5,5 +5,5 @@ export const connectToCamera = async () => {
     return navigator.mediaDevices.getUserMedia({
         video: { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
         audio: false,
-    })
+    });
 }
