@@ -6,8 +6,14 @@ const ELBOWS_SHOULDERS_HANDS_INDEXES = Object.values(BODY_LANDMARK_INDEXES).flat
 
 export const drawPredictions = (landmarks: NormalizedLandmark[], drawingUtils: DrawingUtils) => {
     drawingUtils.drawLandmarks(landmarks, {
-        radius: (landmarkData: LandmarkData) => DrawingUtils.lerp(landmarkData.from.z, -0.15, 0.1, 5, 1),
+        radius: (landmarkData: LandmarkData) => {
+            if (!landmarkData.from) throw new Error('landmarkData.from is undefined');
+
+            return DrawingUtils.lerp(landmarkData.from.z, -0.15, 0.1, 5, 1)
+        },
         color: (landmarkData: LandmarkData) => {
+            if (!landmarkData.index) return BODY_LANDMARK_COLORS.DEFAULT;
+
             if (BODY_LANDMARK_INDEXES.ELBOWS.includes(landmarkData.index)) return BODY_LANDMARK_COLORS.ELBOWS;
             if (
                 BODY_LANDMARK_INDEXES.SHOULDERS.includes(landmarkData.index) ||
@@ -19,6 +25,8 @@ export const drawPredictions = (landmarks: NormalizedLandmark[], drawingUtils: D
     });
     drawingUtils.drawConnectors(landmarks, PoseLandmarker.POSE_CONNECTIONS, {
         color: (landmarkData: LandmarkData) => {
+            if (!landmarkData.index) return BODY_CONNECTORS_COLORS.DEFAULT;
+
             const connection = PoseLandmarker.POSE_CONNECTIONS[landmarkData.index];
 
             if (ELBOWS_SHOULDERS_HANDS_INDEXES.includes(connection.start) &&

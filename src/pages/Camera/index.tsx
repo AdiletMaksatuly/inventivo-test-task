@@ -20,7 +20,7 @@ let lastVideoTime = -1;
 
 export default function CameraPage() {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const landmarkerRef = useRef<PoseLandmarker>(null);
+    const landmarkerRef = useRef<PoseLandmarker | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const [angles, setAngles] = useState<ElbowAngles>({ left: 0, right: 0 });
@@ -50,6 +50,7 @@ export default function CameraPage() {
 
     const predictWebcam = (canvasCtx: CanvasRenderingContext2D, drawingUtils: DrawingUtils) => {
         assertExist(videoRef.current, "videoRef.current");
+        assertExist(landmarkerRef.current, "landmarkerRef.current");
 
         const startTimeMs = performance.now();
 
